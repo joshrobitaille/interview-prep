@@ -14,9 +14,12 @@
   <maven.compiler.target>1.8</maven.compiler.target>
   <!-- <exec.mainClass>project1.reesebenson.Watch</exec.mainClass> -->
   <exec.mainClass>com.revature.projectfactory.App</exec.mainClass>
+
+  <!--
   <sonar.projectKey>hibby96_interviewpractice</sonar.projectKey>
   <sonar.organization>hibby96</sonar.organization>
   <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+  -->
 </properties>
 
 <dependencies>

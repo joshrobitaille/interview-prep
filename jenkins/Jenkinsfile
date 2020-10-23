@@ -14,7 +14,6 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'cd simple-app/'
                 sh 'mvn test -Dcheckstyle.skip=true'
             }
         }
@@ -30,7 +29,6 @@ pipeline {
 
         stage('build'){
             steps{
-                sh 'cd simple-app/'
                 sh 'mvn clean package'
             }
         }
@@ -44,8 +42,7 @@ pipeline {
         stage('Upload Docker Image') {
             steps {
                 script {
-                    sh 'cd simple-app/'
-                    docker.withTool('docker') {
+                   docker.withTool('docker') {
                         repoId = "joshrobitaille/simpleapp"
                         image = docker.build(repoId)
                         docker.withRegistry("https://registry.hub.docker.com", "dockerhoob") {

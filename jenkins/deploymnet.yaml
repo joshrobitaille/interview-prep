@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    namespace: jenkins
     name: jenkins
     labels:
         app: jenkins
@@ -17,7 +16,7 @@ spec:
         spec:
             containers:
             -   name: jenkins
-                image: aarondownward/interview-jenkins
+                image: joshrobitaille/samplejenkins
                 imagePullPolicy: Always
                 volumeMounts:
                     - mountPath: /var/run/docker.sock

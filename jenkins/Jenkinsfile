@@ -1,24 +1,55 @@
 pipeline {
-
     agent any
 
+    tools {
+        maven 'maven'
+    }
+
     stages {
-        stage('Build') {
-            // Run the maven build
+        stage('Pull') {
             steps {
-                echo 'building..'
+                git url: "https://github.com/joshrobitaille/interview-prep.git", branch: "dev"
             }
         }
+
         stage('Test') {
             steps {
-                echo 'testing..'
+                sh 'mvn test -Dcheckstyle.skip=true'
             }
         }
-        stage('Deploy') {
+ 	stage('build && SonarQube analysis') {
             steps {
-                echo 'deploying..'
-                // sh 'false'
+                withSonarQubeEnv('SonarCloud') {
+                    // Optionally use a Maven environment you've configured already
+                    sh 'mvn clean package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.branch.name=\"dev\"'
+		    sleep(10)
+                }
             }
         }
-    }
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+        stage('Upload Docker Image') {
+            steps {
+                script {
+                   docker.withTool('docker') {
+                        repoId = "joshrobitaille/samplejenkins"
+                        image = docker.build(repoId)
+                        docker.withRegistry("https://registry.hub.docker.com", "dockerhoob") {
+                            image.push()
+                        }
+                    }
+                }
+            }
+        }
+        stage('Rollout') {
+            steps {
+                    sh 'kubectl rollout restart deployment/sample-deployment'
+            }
+        }
+                                                                                                                    }
 }
